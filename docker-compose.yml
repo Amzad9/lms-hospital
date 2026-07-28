@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  app:  
+    build: .
+    container_name: nest-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env  
+    environment:
+      MONGODB_URL: ${MONGODB_URL}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
