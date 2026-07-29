@@ -5,6 +5,7 @@ import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from 'src/config/cloudinary.config';
 import { storage } from 'src/cloudinary/cloudinary.storage';
+import { SearchPatientDto } from './dto/searchDto';
 
 @Controller('patients')
 export class PatientController {
@@ -15,13 +16,18 @@ export class PatientController {
   async createPatient(@Body() patientDto: PatientDto) {
     return this.patientService.createPatient(patientDto);
   }
+  
 
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAllPatients() {
     return this.patientService.getAllPatients();
   }
-  
+  @Get('search')
+  async searchPatients(@Query() query: SearchPatientDto) {
+    console.log('Query:', query);
+    return this.patientService.searchPatients(query);
+  }
   @Post(':id/upload')
   @UseInterceptors(
     FileInterceptor('file', {

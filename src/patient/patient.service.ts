@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PatientDto } from './dto/patient.dto';
 import { createClient } from 'redis';
 import { RedisService } from 'src/redis/redis.service';
+import { SearchPatientDto } from './dto/searchDto';
 
 @Injectable()
 export class PatientService {
@@ -90,4 +91,45 @@ export class PatientService {
         );
         return p
     }
+
+    async searchPatients(searchDto: SearchPatientDto) {
+        const { search } = searchDto;
+        const pipeline: any[] = [];
+        if (search) {
+          const conditions: any[] = [
+            {
+              name: {
+                $regex: search,
+                $options: 'i',
+              },
+            },
+            {
+              lastname: {
+                $regex: search,
+                $options: 'i',
+              },
+            },
+          ];
+      
+          if (!isNaN(Number(search))) {
+            conditions.push({
+              mobile: Number(searchDto.search),
+            });
+          }
+      
+          pipeline.push({
+            $match: {
+              $or: conditions,
+            },
+          });
+        }
+      
+        pipeline.push({
+          $sort: {
+            createdAt: -1,
+          },
+        });
+       console.log(pipeline)
+        return this.patientModel.aggregate(pipeline);
+      }
 }

@@ -1,10 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
 import helmet from 'helmet';
 import session from 'express-session';
 import { createClient } from 'redis';
+import { CatchEverythingFilter } from './exceptionfilter/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -29,7 +30,9 @@ async function bootstrap() {
     }),
   );
   app.use(helmet());
-  app.useGlobalInterceptors(new TransformInterceptor());
+  
+  const httpAdapterHost = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new CatchEverythingFilter(httpAdapterHost));  app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalPipes(new ValidationPipe({transform: true}));
   await app.listen(process.env.PORT ?? 3000); 
 }
