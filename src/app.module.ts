@@ -6,6 +6,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
+import { VisitModule } from './visit/visit.module';
+import { DoctorModule } from './doctor/doctor.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -17,6 +20,9 @@ import { RedisModule } from './redis/redis.module';
     MongooseModule.forRoot(process.env.MONGODB_URL as string),
     AuthModule,
     RedisModule,
+    VisitModule,
+    DoctorModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [AppService],
