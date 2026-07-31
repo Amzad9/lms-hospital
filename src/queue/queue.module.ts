@@ -9,5 +9,6 @@ import { Queue, QueueSchema } from './entities/queue.entity';
   imports: [MongooseModule.forFeature([{name: Queue.name, schema: QueueSchema}])],
   controllers: [QueueController],
   providers: [QueueService],
+  exports: [QueueService],
 })
 export class QueueModule {}

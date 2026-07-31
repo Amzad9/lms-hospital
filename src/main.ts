@@ -10,11 +10,16 @@ import { CatchEverythingFilter } from './exceptionfilter/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  const redisClient = createClient({
-    url: process.env.REDIS_URL,
-  });
-  await redisClient.connect();
-  console.log(await redisClient.ping());
+
+  // Redis is optional — session store works in-memory if Redis is unavailable
+  const redisClient = createClient({ url: process.env.REDIS_URL });
+  try {
+    await redisClient.connect();
+    console.log('Redis PING:', await redisClient.ping());
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(`[main] Redis unavailable — continuing without it. (${msg})`);
+  }
   app.enableCors({
     origin: true,
     credentials: true,

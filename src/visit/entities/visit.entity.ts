@@ -7,12 +7,7 @@ export type VisitDocument = HydratedDocument<Visit>
 
 @Schema({ timestamps: true })
 export class Visit {
-    @Prop({
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Patient',
-        required: true
-    })
-    patientId: Types.ObjectId;
+
 
 
     @Prop({
@@ -42,6 +37,16 @@ export class Visit {
         default: Status.ACTIVE,
     })
     status: Status;
+
+    @Prop({ default: 'screening'})
+    type: string
+    
+    @Prop({
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient',
+        required: true
+    })
+    patientId: Types.ObjectId;
 }
 
 export const  VisitSchema = SchemaFactory.createForClass(Visit)

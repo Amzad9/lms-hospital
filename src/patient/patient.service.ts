@@ -31,24 +31,26 @@ export class PatientService {
 
     async getAllPatients() {
         const cacheKey = 'patients';
-        const redis = this.redisService.getClient();
 
-        const cached = await redis.get(cacheKey);
-
-        if (cached) {
-            console.log('✅ Data from Redis');
-            return JSON.parse(cached);
+        // Only use cache when Redis is actually connected
+        if (this.redisService.isConnected()) {
+            const redis = this.redisService.getClient();
+            const cached = await redis.get(cacheKey).catch(() => null);
+            if (cached) {
+                console.log('✅ Data from Redis');
+                return JSON.parse(cached);
+            }
         }
+
         console.log('📦 Data from MongoDB');
-
-
         const patients = await this.patientModel.find().lean().exec();
 
-        await redis.set(cacheKey, JSON.stringify(patients), {
-            EX: 300,
-        });
+        if (this.redisService.isConnected()) {
+            const redis = this.redisService.getClient();
+            await redis.set(cacheKey, JSON.stringify(patients), { EX: 300 }).catch(() => undefined);
+        }
 
-        return patients
+        return patients;
     }
     async getPatinetById(id: string) {
         const patientList = await this.patientModel.findById(id)

@@ -13,6 +13,14 @@ services:
       REDIS_URL: ${REDIS_URL}
     depends_on:
       - redis
+    develop:
+      watch:
+        - action: sync+restart
+          path: .
+          target: /code
+        - action: rebuild
+          path: requirements.txt
+    
 
   redis:
     image: redis:7-alpine

@@ -6,6 +6,7 @@ export class CreateVisitDto {
     @IsNotEmpty()
     @IsMongoId()
     patientId: string;
+
     @IsNotEmpty()
     @IsMongoId()
     doctorId: string;
@@ -32,5 +33,7 @@ export class CreateVisitDto {
     @IsOptional()
     @IsEnum(Status)
     status?: Status;
-
+    
+    @IsString()
+    type: string
 }

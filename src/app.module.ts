@@ -9,6 +9,7 @@ import { RedisModule } from './redis/redis.module';
 import { VisitModule } from './visit/visit.module';
 import { DoctorModule } from './doctor/doctor.module';
 import { QueueModule } from './queue/queue.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { QueueModule } from './queue/queue.module';
     VisitModule,
     DoctorModule,
     QueueModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
